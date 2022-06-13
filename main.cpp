@@ -1,4 +1,5 @@
 #define CATCH_CONFIG_RUNNER
+#define _CRT_SECURE_NO_WARNINGS
 #define TEST 1 // Always change to 1 before your final submission to Github Classroom.
 #include "lib/catch.hpp"
 #include "hashtable.hpp"
