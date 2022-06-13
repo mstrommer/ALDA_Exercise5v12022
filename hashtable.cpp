@@ -53,9 +53,8 @@ int readFile(hashtable * ht, const char * filename){
     }
     // read all weather stations from file and add them to the
     // hash table
-    while (!feof(fp)) {
+    while (fgets(line, 100, fp)) {
         // read one line and skip empty and comment lines
-        fgets(line, 100, fp);
         if (line[0] == '#') continue;
         if (isspace(line[0])) continue;
         // delete the newline character
