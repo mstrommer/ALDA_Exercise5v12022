@@ -4,139 +4,130 @@
 
 //#define CATCH_CONFIG_MAIN // defines main() automatically
 #include "lib/catch.hpp"
-#include "list.hpp"
+#include "hashtable.hpp"
 #include <string.h>
 #include <stdio.h>
 
+int hasDuplicatesInList(hashtable *ht, char *key){
+    int hash = ht_hash(ht, key);
+    list *lst = ht->buckets[hash];
+    int count = 0;
+    element *tmp = lst->head;
+    while(tmp){
+        if(strcmp(key, tmp->icao_code) == 0){
+            count++;
+        }
+        tmp = tmp->next;
+    }
+    return count > 1 ? 1 : 0;
+}
 
 // =====================
-// List Testcases
+// HastTable Testcases
 // ---------------------
 
-TEST_CASE("Test1", "init")
+TEST_CASE("Test1", "hash1")
 {
-    list *list = l_init();
-    INFO("Test Case for l_init: pointer may not be NULL. All variables of the struct need to be initialized.");
-    REQUIRE(list != nullptr);
-    REQUIRE(list->count == 0);
-    REQUIRE(list->head == nullptr);
-}
-
-TEST_CASE("Test2", "insert")
-{
-    list *list = l_init();
-    INFO("Test Case for l_insert.");
-    REQUIRE(list != nullptr);
-    l_insert(list, (char*)"wonderland");
-    l_insert(list, (char*)"rabbit");
-    l_insert(list, (char*)"queen of hearts");
-    REQUIRE(list->head != nullptr);
-    REQUIRE(list->count == 3);
-}
-
-TEST_CASE("Test3", "delete")
-{
-    list *list = l_init();
-    INFO("Test Case for l_delete.");
-    REQUIRE(list != nullptr);
-    l_insert(list, (char*)"wonderland");
-    l_insert(list, (char*)"rabbit");
-    l_insert(list, (char*)"queen of hearts");
-    l_delete(list, (char*)"queen of hearts");
-    REQUIRE(list->head != nullptr);
-    REQUIRE(list->count == 2);
-    REQUIRE(strcmp(list->head->word, "rabbit") == 0);
-}
-
-TEST_CASE("Test4", "find")
-{
-    list *list = l_init();
-    element *tmp;
-    INFO("Test Case for l_find.");
-    REQUIRE(list != nullptr);
-    l_insert(list, (char*)"wonderland");
-    l_insert(list, (char*)"rabbit");
-    l_insert(list, (char*)"queen of hearts");
-    tmp = l_find(list, (char*)"queen of hearts");
-    REQUIRE(list->head != nullptr);
-    REQUIRE(list->count == 3);
-    REQUIRE(tmp != nullptr);
-    REQUIRE(strcmp(tmp->word, "queen of hearts") == 0);
-}
-
-TEST_CASE("Test5", "readFile")
-{
-    list* list = l_init();
-    element *tmp;
-    INFO("Test Case for readFile.");
-    REQUIRE(list != nullptr);
-    
-    if(!readFile(list, (char*)"alice.txt")){
-        tmp = l_find(list, (char*)"project");
-        REQUIRE(tmp != nullptr);
-        REQUIRE((tmp->count >= 79 && tmp->count <= 83));
-    }
-}
-
-TEST_CASE("Test6", "frequencyCount")
-{
-    list* list = l_init();
-    int frequencies[26] = {0};
-    INFO("Test Case for frequencyCount.");
-    REQUIRE(list != nullptr);
-    
-    if(!readFile(list, (char*)"alice.txt")){
-        frequencyCount(list, frequencies);
-        /* for debugging purposes
-        for(int i=0; i < 26; i++){
-            printf("%c: %i\n", i+97, frequencies[i]);
+    hashtable *ht = ht_init(100);
+    int result = readFile(ht, "stations.csv");
+    INFO("Testing if the file can be opened.");
+    REQUIRE(result != 1);
+    INFO("File can be opened. Testing the hash function fails because all is put into bucket 0");
+    int flag = 0;
+    for(int i = 1; i < ht->capacity; i++){
+        if(ht->buckets[i]->count != 0){
+            flag = 1;
+            break;
         }
-        */
-        REQUIRE(frequencies[0] >= 9400);
-        REQUIRE(frequencies[1] >= 1650);
-        REQUIRE(frequencies[25] >= 78);
     }
+    REQUIRE(flag == 1);
 }
 
-TEST_CASE("Test7", "letterCount")
+TEST_CASE("Test2", "hash2")
 {
-    list* list = l_init();
-    int total = 0;
-    INFO("Test Case for letterCount.");
-    REQUIRE(list != nullptr);
-    
-    if(!readFile(list, (char*)"alice.txt")){
-        total = letterCount(list);
-        REQUIRE(total >= 117420);
+    hashtable *ht = ht_init(100);
+    int result = readFile(ht, "stations.csv");
+    //ht_print_bucket_sizes(ht);
+    INFO("Testing if the file can be opened.");
+    REQUIRE(result != 1);
+    INFO("File can be opened. Your hash function could be improved. We found too many extreme vaules for single bucket sizes.");
+    int max_vaule_allowed = 100;
+    int min_value_allowed = 10;
+    for(int i = 1; i < ht->capacity; i++){
+        REQUIRE(ht->buckets[i]->count < max_vaule_allowed);
+        REQUIRE(ht->buckets[i]->count > min_value_allowed);
     }
 }
 
-TEST_CASE("Test8", "wordCount")
+TEST_CASE("Test3", "hash3")
 {
-    list* list = l_init();
-    int total = 0;
-    INFO("Test Case for wordCount.");
-    REQUIRE(list != nullptr);
-    
-    if(!readFile(list, (char*)"alice.txt")){
-        total = wordCount(list);
-        REQUIRE(total >= 28059);
+    hashtable *ht = ht_init(100);
+    int result = readFile(ht, "stations.csv");
+    //ht_print_bucket_sizes(ht);
+    INFO("Testing if the file can be opened.");
+    REQUIRE(result != 1);
+    INFO("File can be opened. Your hash function could still be improved. We found too many extreme vaules for an 'excellent' implementation.");
+    int max_vaule_allowed = 71;
+    int min_value_allowed = 36;
+    for(int i = 1; i < ht->capacity; i++){
+        REQUIRE(ht->buckets[i]->count < max_vaule_allowed);
+        REQUIRE(ht->buckets[i]->count > min_value_allowed);
     }
 }
 
-TEST_CASE("Test9", "deleteWords")
+TEST_CASE("Test4", "put1")
 {
-    list* list = l_init();
-    element *tmp = nullptr;
-    INFO("Test Case for deleteWords with a frequency less than 100.");
-    REQUIRE(list != nullptr);
-    
-    if(!readFile(list, (char*)"alice.txt")){
-        deleteWords(list, 100);
-        REQUIRE(list->count < 50);
-        REQUIRE(list->count > 1);
-        tmp = l_find(list, (char*)"wondered");
-        REQUIRE(tmp == nullptr);
-    }
+    hashtable *ht = ht_init(100);
+    int result = readFile(ht, "stations.csv");
+    INFO("Testing if the file can be opened.");
+    REQUIRE(result != 1);
+    INFO("File can be opened. Testing of the put function fails.");
+    int hash = ht_hash(ht, (char*)"LOWW");
+    element *tmp = l_find(ht->buckets[hash], (char*)"LOWW");
+    REQUIRE(tmp != nullptr);
 }
 
+TEST_CASE("Test5", "put2")
+{
+    hashtable *ht = ht_init(100);
+    int result = readFile(ht, "stations.csv");
+    INFO("Testing if the file can be opened.");
+    REQUIRE(result != 1);
+    INFO("File can be opened. Testing of the put function fails.");
+    int hash = ht_hash(ht, (char*)"LOWW");
+    element *tmp = l_find(ht->buckets[hash], (char*)"LOWW");
+    REQUIRE(tmp != nullptr);
+    INFO("Basic put OK. Testing the put function's delete capability fails.");
+    ht_put(ht, (char*)"LOWW",nullptr);
+    tmp = l_find(ht->buckets[hash], (char*)"LOWW");
+    REQUIRE(tmp == nullptr);
+}
+
+TEST_CASE("Test6", "put3")
+{
+    hashtable *ht = ht_init(100);
+    int result = readFile(ht, "stations.csv");
+    INFO("Testing if the file can be opened.");
+    REQUIRE(result != 1);
+    INFO("File can be opened. Testing of the put function fails.");
+    int hash = ht_hash(ht, (char*)"LOWW");
+    element *tmp = l_find(ht->buckets[hash], (char*)"LOWW");
+    REQUIRE(tmp != nullptr);
+    INFO("Basic put OK. Testing the put function's update capability fails.");
+    ht_put(ht, (char*)"LOWW",(char*)"Vienna Airport");
+    tmp = l_find(ht->buckets[hash], (char*)"LOWW");
+    REQUIRE(strcmp(tmp->station_name, "Vienna Airport") == 0);
+    REQUIRE(hasDuplicatesInList(ht, (char*)"LOWW") == 0);
+}
+
+TEST_CASE("Test7", "get")
+{
+    hashtable *ht = ht_init(100);
+    int result = readFile(ht, "stations.csv");
+    INFO("Testing if the file can be opened.");
+    REQUIRE(result != 1);
+    INFO("File can be opened. Testing of the get function fails.");
+    char *tmp = ht_get(ht, (char*)"LOWW");
+    REQUIRE(tmp != nullptr);
+    REQUIRE(strcmp(tmp, "Wien / Schwechat-Flughafen") == 0);
+}

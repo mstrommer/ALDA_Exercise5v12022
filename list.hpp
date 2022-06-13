@@ -1,27 +1,27 @@
-#pragma once
+#ifndef _LIST_H_
+#define _LIST_H_
 
 struct _element {
-    char word[100];
-    int count;
+    char icao_code[5]; // key = icao_code
+    char station_name[100]; // value = station_name
     struct _element * next;
 };
 
 typedef struct _element element;
 
-struct _list {
+struct _list
+{
+    element * head;
     int count;
-    struct _element * head;
 };
 
 typedef struct _list list;
 
-list *l_init();
-void l_insert(list *lst, char *word);
-void l_delete(list *lst, char *word);
-void l_print(list *lst);
-element *l_find(list *lst, char *word);
-int readFile(list *list, char *filename);
-void frequencyCount(list *list, int *frequencies);
-int letterCount(list *list);
-int wordCount(list *list);
-void deleteWords(list *list, int frequency);
+list *    l_init(void);
+void      l_insert(list * lst, char * icao_code, char * station_name);
+void      l_delete(list * lst, char * icao_code);
+void      l_print(list * lst);
+element * l_find(list * lst, char * icao_code);
+
+
+#endif /*_LIST_H_*/
