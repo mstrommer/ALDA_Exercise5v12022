@@ -14,12 +14,14 @@ list * l_init() {
 
 void l_insert(list * lst, char * icao_code, char * station_name)
 {
-    element * new_data = (element *)malloc(sizeof(element));
-    strcpy(new_data->icao_code, icao_code);
-    strcpy(new_data->station_name, station_name);
-    new_data->next = lst->head;
-    lst->head = new_data;
-    lst->count++;
+    if(station_name){ // check important for testcases, otherwise not
+        element * new_data = (element *)malloc(sizeof(element));
+        strcpy(new_data->icao_code, icao_code);
+        strcpy(new_data->station_name, station_name);
+        new_data->next = lst->head;
+        lst->head = new_data;
+        lst->count++;
+    }
 }
 
 void l_delete(list * lst, char * icao_code)
