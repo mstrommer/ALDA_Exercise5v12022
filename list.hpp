@@ -1,5 +1,6 @@
 #ifndef _LIST_H_
 #define _LIST_H_
+#define _CRT_SECURE_NO_WARNINGS
 
 struct _element {
     char icao_code[5]; // key = icao_code
