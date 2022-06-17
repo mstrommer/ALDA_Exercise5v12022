@@ -22,6 +22,7 @@ Explanations for the other files:
 - file `tests.cpp` has all tests for the activity (DO NOT CHANGE!)
 - file `catch.hpp` has the testing library  CATCH2 (DO NOT CHANGE!)
 - file `hashtable.hpp` contains the prototype definitions for `hashtable.cpp` (DO NOT CHANGE!)
+- file `list.hpp` contains the prototype definitions for `list.cpp` (DO NOT CHANGE!)
 - file `makefile` has the commands for executing activity (DO NOT CHANGE!)
 - file  `exercise5` will be generated after compiling (if you want to test locally, just execute it)
 
