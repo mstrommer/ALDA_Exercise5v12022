@@ -54,8 +54,8 @@ TEST_CASE("Test2", "hash2")
     int max_vaule_allowed = 100;
     int min_value_allowed = 10;
     for(int i = 0; i < ht->capacity; i++){
-        REQUIRE(ht->buckets[i]->count < max_vaule_allowed);
-        REQUIRE(ht->buckets[i]->count > min_value_allowed);
+        REQUIRE(ht->buckets[i]->count <= max_vaule_allowed);
+        REQUIRE(ht->buckets[i]->count >= min_value_allowed);
     }
 }
 
@@ -70,8 +70,8 @@ TEST_CASE("Test3", "hash3")
     int max_vaule_allowed = 71;
     int min_value_allowed = 36;
     for(int i = 0; i < ht->capacity; i++){
-        REQUIRE(ht->buckets[i]->count < max_vaule_allowed);
-        REQUIRE(ht->buckets[i]->count > min_value_allowed);
+        REQUIRE(ht->buckets[i]->count <= max_vaule_allowed);
+        REQUIRE(ht->buckets[i]->count >= min_value_allowed);
     }
 }
 
