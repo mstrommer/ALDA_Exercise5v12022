@@ -126,8 +126,19 @@ TEST_CASE("Test7", "get")
     int result = readFile(ht, "stations.csv");
     INFO("Testing if the file can be opened.");
     REQUIRE(result != 1);
-    INFO("File can be opened. Testing of the get function fails.");
+    INFO("File can be opened. Testing of the get function fails. Looking for an existing key.");
     char *tmp = ht_get(ht, (char*)"LOWW");
     REQUIRE(tmp != nullptr);
     REQUIRE(strcmp(tmp, "Wien / Schwechat-Flughafen") == 0);
+}
+
+TEST_CASE("Test8", "get2")
+{
+    hashtable *ht = ht_init(100);
+    int result = readFile(ht, "stations.csv");
+    INFO("Testing if the file can be opened.");
+    REQUIRE(result != 1);
+    INFO("File can be opened. Testing of the get function fails. Looking for an invalid key.");
+    char *tmp = ht_get(ht, (char*)"LOWY");
+    REQUIRE(tmp == nullptr);
 }
